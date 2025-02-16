@@ -41,10 +41,10 @@ app.use(
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-      secure: true,  // ✅ Должно быть true для HTTPS
-      sameSite: "none", // ✅ Кросс-доменные куки
+      secure: true,   // ✅ Должно быть true, так как сайт работает на HTTPS
+      sameSite: "none", // ✅ Разрешаем кросс-доменные куки
       httpOnly: true,
-    },       
+    },    
   })
 );
 
@@ -90,7 +90,7 @@ app.get("/logout", (req, res) => {
 
 // 👤 Получение данных пользователя
 app.get("/user", (req, res) => {
-  console.log("🔍 Проверка сессии:", req.session); // ✅ Лог сессии
+  console.log("🔍 Сессия:", req.session); // ✅ Лог сессии
   console.log("🔍 Пользователь:", req.user);
 
   if (req.isAuthenticated()) {
