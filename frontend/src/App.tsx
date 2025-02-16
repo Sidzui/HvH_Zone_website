@@ -13,6 +13,7 @@ import WinterCasePage from "./pages/cases/WinterCasePage";
 import NeverloseCasePage from "./pages/cases/NeverloseCasePage";
 import SkeetCasePage from "./pages/cases/SkeetCasePage";
 
+const AUTH_URL = "https://hvhzone.ru";
 const API_URL = "https://hvhzone.ru/api"; // ✅ Домен бэкенда
 
 function App() {
@@ -41,7 +42,7 @@ function App() {
   }, []);
 
   const handleLogin = () => {
-    window.location.href = `${API_URL}/auth/steam`;
+    window.location.href = `${AUTH_URL}/auth/steam`;
   };
   
   const handleLogout = () => {
