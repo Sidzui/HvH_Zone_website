@@ -41,10 +41,10 @@ app.use(
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-      secure: false, // ✅ Ставим false для тестов, на Netlify может быть проблема с secure
-      sameSite: "lax", // ✅ Меняем на lax, чтобы куки не блокировались
-      httpOnly: true, // ✅ Делаем куки доступными только серверу
-    },
+      secure: true,  // ✅ Должно быть true для HTTPS
+      sameSite: "none", // ✅ Кросс-доменные куки
+      httpOnly: true,
+    },       
   })
 );
 
@@ -90,7 +90,9 @@ app.get("/logout", (req, res) => {
 
 // 👤 Получение данных пользователя
 app.get("/user", (req, res) => {
-  console.log("🔍 Запрос на /user:", req.user);
+  console.log("🔍 Проверка сессии:", req.session); // ✅ Лог сессии
+  console.log("🔍 Пользователь:", req.user);
+
   if (req.isAuthenticated()) {
     res.json({
       id: req.user.id,
@@ -101,6 +103,7 @@ app.get("/user", (req, res) => {
     res.json(null);
   }
 });
+
 
 // 📊 Получение статистики
 app.get("/stats", async (req, res) => {
