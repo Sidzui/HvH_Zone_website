@@ -13,23 +13,37 @@ import WinterCasePage from "./pages/cases/WinterCasePage";
 import NeverloseCasePage from "./pages/cases/NeverloseCasePage";
 import SkeetCasePage from "./pages/cases/SkeetCasePage";
 
-const API_URL = "https://hvh-zone-website.onrender.com"; // ✅ Используем правильный URL
+const API_URL = "https://hvh-zone-website.onrender.com";
 
 function App() {
-  const [stats, setStats] = useState({ players: 0, recent_players: 0, admins: 0, bans: 0 });
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // ✅ Загрузка статистики
-    fetch(`${API_URL}/stats`)
-      .then((res) => res.json())
-      .then((data) => setStats(data));
-
-    // ✅ Проверка авторизации пользователя
     fetch(`${API_URL}/user`, { credentials: "include" })
       .then((res) => res.json())
-      .then((data) => setUser(data));
+      .then((data) => {
+        setUser(data);
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Ошибка загрузки пользователя:", err);
+        setLoading(false);
+      });
   }, []);
+
+  const handleLogin = () => {
+    window.location.href = `${API_URL}/auth/steam`;
+  };
+
+  const handleLogout = () => {
+    fetch(`${API_URL}/logout`, { credentials: "include" })
+      .then(() => {
+        setUser(null);
+        window.location.reload(); // ✅ Перезагрузка после выхода
+      })
+      .catch((err) => console.error("Ошибка выхода:", err));
+  };
 
   return (
     <Router>
@@ -56,27 +70,33 @@ function App() {
               </div>
 
               {/* Steam Login */}
-              {user ? (
+              {loading ? (
+                <div className="text-gray-400">Загрузка...</div>
+              ) : user ? (
                 <div className="flex items-center space-x-3">
-                  <img src={user.avatar} alt="Avatar" className="w-10 h-10 rounded-full border border-pink-500" />
+                  <img
+                    src={user.avatar}
+                    alt="Avatar"
+                    className="w-10 h-10 rounded-full border border-pink-500"
+                  />
                   <span className="text-sm font-medium">{user.name}</span>
-                  <a
-                    href={`${API_URL}/logout`} // ✅ Исправили ссылку
+                  <button
+                    onClick={handleLogout}
                     className="bg-red-500 px-4 py-2 rounded-lg text-white hover:opacity-90 transition"
                   >
                     ВЫЙТИ
-                  </a>
+                  </button>
                 </div>
               ) : (
-                <a
-                  href={`${API_URL}/auth/steam`} // ✅ Исправили ссылку
+                <button
+                  onClick={handleLogin}
                   className="bg-gradient-to-br from-blue-500 via-blue-600 to-blue-700 px-4 py-2 rounded-lg flex items-center space-x-2 hover:opacity-90 transition-all duration-200 shadow-lg hover:shadow-blue-500/20"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12 0C5.6 0 0.4 4.8 0 11.2L6.4 13.6C6.8 13.2 7.6 13.2 8 13.2L11.2 9.2C11.2 6.4 13.6 4 16.4 4C19.2 4 21.6 6.4 21.6 9.2C21.6 12 19.2 14.4 16.4 14.4L12.4 17.6C12.4 18 12.4 18.4 12 18.8L14.4 24C20.8 23.6 26 18.4 26 12C26 5.6 19.6 0 12 0Z" fill="currentColor"/>
                   </svg>
                   <span className="font-medium">ВОЙТИ</span>
-                </a>
+                </button>
               )}
             </div>
           </div>

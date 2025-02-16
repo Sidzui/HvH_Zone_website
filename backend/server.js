@@ -50,7 +50,7 @@ passport.use(
     {
       returnURL: "https://hvh-zone-website.onrender.com/auth/steam/return",
       realm: "https://hvh-zone-website.onrender.com/",
-      apiKey: "YOUR_STEAM_API_KEY",
+      apiKey: "37AAEFA9747FBE0916081BF5F3829EC0",
     },
     function (identifier, profile, done) {
       profile.identifier = identifier;
