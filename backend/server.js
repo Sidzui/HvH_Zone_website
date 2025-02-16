@@ -8,6 +8,8 @@ const MySQLStore = require("express-mysql-session")(session);
 
 const app = express();
 
+app.set("trust proxy", 1);
+
 // 🌍 Разрешаем CORS
 app.use(
   cors({
@@ -83,18 +85,20 @@ app.get(
     console.log("🔍 Сессия после входа:", req.session);
     console.log("🔍 Пользователь после входа:", req.user);
     res.redirect("https://hvhzone.ru"); // ✅ После входа редирект
+    console.log("🔍 Сессия после входа:", req.session);
+    console.log("🔍 Пользователь после входа:", req.user);
   }
 );
 
 // 🔄 Выход
-app.get("/logout", (req, res) => {
+app.get("/api/logout", (req, res) => {
   req.logout(() => {
     res.redirect("https://hvhzone.ru");
   });
 });
 
 // 👤 Получение данных пользователя
-app.get("/user", (req, res) => {
+app.get("/api/user", (req, res) => {
   console.log("🔍 Сессия:", req.session); // ✅ Лог сессии
   console.log("🔍 Пользователь:", req.user);
 
@@ -111,7 +115,7 @@ app.get("/user", (req, res) => {
 
 
 // 📊 Получение статистики
-app.get("/stats", async (req, res) => {
+app.get("/api/stats", async (req, res) => {
   try {
     const [players] = await db.query("SELECT COUNT(*) AS players FROM lvl_base");
     const last24Hours = Math.floor(Date.now() / 1000) - 86400;

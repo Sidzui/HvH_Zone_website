@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-const API_URL = "https://hvhzone.ru";
+const API_URL = "https://hvhzone.ru/api";
 
 function HomePage() {
   const [copied, setCopied] = useState(false);

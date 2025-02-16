@@ -13,7 +13,7 @@ import WinterCasePage from "./pages/cases/WinterCasePage";
 import NeverloseCasePage from "./pages/cases/NeverloseCasePage";
 import SkeetCasePage from "./pages/cases/SkeetCasePage";
 
-const API_URL = "https://hvhzone.ru"; // ✅ Домен бэкенда
+const API_URL = "https://hvhzone.ru/api"; // ✅ Домен бэкенда
 
 function App() {
   const [user, setUser] = useState(null);
