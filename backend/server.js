@@ -100,6 +100,19 @@ app.get("/stats", (req, res) => {
   });
 });
 
+app.get("/user", (req, res) => {
+  if (req.isAuthenticated()) {
+    res.json({
+      id: req.user.id,
+      name: req.user.displayName,
+      avatar: req.user.photos[0].value, // Получаем аватарку
+    });
+  } else {
+    res.json(null);
+  }
+});
+
+
 // 🌐 Запускаем сервер
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`🚀 Сервер запущен на порту ${PORT}`));
