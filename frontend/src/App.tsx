@@ -13,17 +13,19 @@ import WinterCasePage from "./pages/cases/WinterCasePage";
 import NeverloseCasePage from "./pages/cases/NeverloseCasePage";
 import SkeetCasePage from "./pages/cases/SkeetCasePage";
 
-const API_URL = "https://hvh-zone-website.onrender.com";
+const API_URL = "https://hvh-zone-website.onrender.com"; // ✅ Домен бэкенда
 
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${API_URL}/user`, { credentials: "include" })
+    fetch(`${API_URL}/user`, { credentials: "include" }) // ✅ Запрашиваем пользователя
       .then((res) => res.json())
       .then((data) => {
-        setUser(data);
+        if (data && !data.error) {
+          setUser(data);
+        }
         setLoading(false);
       })
       .catch((err) => {
@@ -33,14 +35,14 @@ function App() {
   }, []);
 
   const handleLogin = () => {
-    window.location.href = `${API_URL}/auth/steam`;
+    window.location.href = `${API_URL}/auth/steam`; // ✅ Редирект на Steam
   };
 
   const handleLogout = () => {
-    fetch(`${API_URL}/logout`, { credentials: "include" })
+    fetch(`${API_URL}/logout`, { credentials: "include" }) // ✅ Удаление сессии
       .then(() => {
         setUser(null);
-        window.location.reload(); // ✅ Перезагрузка после выхода
+        window.location.reload(); // ✅ Перезагрузка страницы
       })
       .catch((err) => console.error("Ошибка выхода:", err));
   };
@@ -48,18 +50,18 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen bg-gray-900 text-white">
-        {/* Navigation */}
+        {/* Навигация */}
         <nav className="bg-gray-900/80 backdrop-blur-sm border-b border-pink-500/20 fixed w-full z-50">
           <div className="max-w-7xl mx-auto px-4">
             <div className="flex items-center justify-between h-16">
-              {/* Logo */}
+              {/* Лого */}
               <Link to="/" className="flex items-center space-x-2 hover:opacity-90 transition-opacity">
                 <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-500">
                   HvH Zone
                 </h1>
               </Link>
 
-              {/* Navigation Links */}
+              {/* Навигация */}
               <div className="flex items-center space-x-2">
                 <NavLink to="/shop" icon={<ShoppingCart size={18} />} text="МАГАЗИН" />
                 <NavLink to="/weapons" icon={<Sword size={18} />} text="МОДЕЛИ ОРУЖИЯ" />
@@ -69,7 +71,7 @@ function App() {
                 <NavLink to="/wallet" icon={<Wallet size={18} />} text="КОШЕЛЕК" />
               </div>
 
-              {/* Steam Login */}
+              {/* Авторизация */}
               {loading ? (
                 <div className="text-gray-400">Загрузка...</div>
               ) : user ? (
@@ -102,7 +104,7 @@ function App() {
           </div>
         </nav>
 
-        {/* Routes */}
+        {/* Маршруты */}
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/shop" element={<ShopPage />} />
@@ -121,6 +123,7 @@ function App() {
   );
 }
 
+// 🔗 Компонент кнопок навигации
 function NavLink({ to, icon, text }: { to: string; icon: React.ReactNode; text: string }) {
   return (
     <Link 

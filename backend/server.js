@@ -19,12 +19,13 @@ db.connect((err) => {
 });
 
 const app = express();
+const CLIENT_URL = "https://hvhzone.netlify.app"; // ✅ Указываем домен фронтенда
 
-// 🌍 Настройка CORS (Разрешаем запросы с Netlify)
+// 🌍 Разрешаем CORS (чтобы Netlify мог получать куки с Render)
 app.use(
   cors({
-    origin: "https://hvhzone.netlify.app", // ✅ Укажи URL фронтенда
-    credentials: true, // ✅ Разрешаем куки и сессии
+    origin: CLIENT_URL,
+    credentials: true, // ✅ Разрешаем передачу сессионных куки
   })
 );
 
@@ -36,6 +37,7 @@ app.use(
     saveUninitialized: false,
     cookie: {
       secure: true, // ✅ Нужно для HTTPS
+      httpOnly: true,
       sameSite: "none", // ✅ Позволяет кросс-доменные куки
     },
   })
@@ -44,13 +46,13 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// 🔑 Настройка Steam авторизации
+// 🔑 Авторизация через Steam
 passport.use(
   new SteamStrategy(
     {
       returnURL: "https://hvh-zone-website.onrender.com/auth/steam/return",
       realm: "https://hvh-zone-website.onrender.com/",
-      apiKey: "37AAEFA9747FBE0916081BF5F3829EC0",
+      apiKey: process.env.STEAM_API_KEY, // ✅ Используем API-ключ из переменных окружения
     },
     function (identifier, profile, done) {
       profile.identifier = identifier;
@@ -69,19 +71,13 @@ app.get(
   "/auth/steam/return",
   passport.authenticate("steam", { failureRedirect: "/" }),
   (req, res) => {
-    res.redirect("https://hvhzone.netlify.app"); // ✅ После входа редирект на сайт
+    res.redirect(CLIENT_URL); // ✅ Перенаправляем обратно на фронтенд
   }
 );
 
-// 🔄 Выход
-app.get("/logout", (req, res) => {
-  req.logout(() => {
-    res.redirect("https://hvhzone.netlify.app");
-  });
-});
-
-// 👤 Получение данных пользователя
+// 🔍 Проверка текущего пользователя
 app.get("/user", (req, res) => {
+  console.log("Запрос пользователя:", req.user);
   if (req.isAuthenticated()) {
     res.json({
       id: req.user.id,
@@ -89,8 +85,16 @@ app.get("/user", (req, res) => {
       avatar: req.user.photos[0].value, // ✅ Отправляем аватарку Steam
     });
   } else {
-    res.json(null);
+    res.status(401).json({ error: "Не авторизован" });
   }
+});
+
+// 🔄 Выход
+app.get("/logout", (req, res) => {
+  req.session.destroy((err) => {
+    res.clearCookie("connect.sid", { path: "/" }); // ✅ Удаляем куки с сессией
+    res.redirect(CLIENT_URL);
+  });
 });
 
 // 📊 Получение статистики
