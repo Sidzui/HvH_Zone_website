@@ -2,7 +2,7 @@ const express = require("express");
 const session = require("express-session");
 const passport = require("passport");
 const SteamStrategy = require("passport-steam").Strategy;
-const mysql = require("mysql2/promise"); // Используем promise-версию
+const mysql = require("mysql2/promise"); // ✅ Используем Promise API
 const cors = require("cors");
 const MySQLStore = require("express-mysql-session")(session);
 
@@ -12,11 +12,11 @@ const app = express();
 app.use(
   cors({
     origin: "https://hvhzone.netlify.app",
-    credentials: true,
+    credentials: true, // ✅ Разрешаем кросс-доменные куки
   })
 );
 
-// 🔧 Подключение к MySQL с promise API
+// 🔧 Подключение к MySQL
 const db = mysql.createPool({
   host: "185.248.101.137",
   user: "gs32752",
@@ -41,9 +41,9 @@ app.use(
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-      secure: false, // 🔧 Сделай false для тестов, true для HTTPS
-      sameSite: "lax", // 🔧 Попробуй lax, если проблемы с кросс-доменными куками
-      httpOnly: false,
+      secure: false, // ✅ Ставим false для тестов, на Netlify может быть проблема с secure
+      sameSite: "lax", // ✅ Меняем на lax, чтобы куки не блокировались
+      httpOnly: true, // ✅ Делаем куки доступными только серверу
     },
   })
 );
@@ -76,6 +76,7 @@ app.get(
   "/auth/steam/return",
   passport.authenticate("steam", { failureRedirect: "/" }),
   (req, res) => {
+    console.log("✅ Пользователь авторизован:", req.user);
     res.redirect("https://hvhzone.netlify.app"); // ✅ После входа редирект
   }
 );
@@ -89,7 +90,7 @@ app.get("/logout", (req, res) => {
 
 // 👤 Получение данных пользователя
 app.get("/user", (req, res) => {
-  console.log("User:", req.user);
+  console.log("🔍 Запрос на /user:", req.user);
   if (req.isAuthenticated()) {
     res.json({
       id: req.user.id,
@@ -122,7 +123,7 @@ app.get("/stats", async (req, res) => {
       bans: bans[0].bans,
     });
   } catch (err) {
-    console.error("Ошибка при получении статистики:", err);
+    console.error("❌ Ошибка при получении статистики:", err);
     res.status(500).json({ error: "Ошибка сервера" });
   }
 });
