@@ -82,14 +82,6 @@ function App() {
           </div>
         </nav>
 
-        {/* Статистика */}
-        <div className="text-center mt-20">
-          <h2 className="text-4xl font-bold">{stats.players.toLocaleString()} ИГРОКОВ</h2>
-          <h3 className="text-xl mt-2">{stats.recent_players} ИГРОКОВ ЗА 24 ЧАСА</h3>
-          <h3 className="text-xl mt-2">{stats.admins} АДМИНОВ</h3>
-          <h3 className="text-xl mt-2">{stats.bans.toLocaleString()} БАНОВ</h3>
-        </div>
-
         {/* Routes */}
         <Routes>
           <Route path="/" element={<HomePage />} />
