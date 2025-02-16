@@ -80,8 +80,8 @@ app.get("/stats", (req, res) => {
         stats.recent_players = result[0].recent_players;
 
         db.query(
-          "SELECT (SELECT COUNT(*) FROM iks_admins) + (SELECT COUNT(*) FROM as_admins) - 2 AS admins",
-          (err, result) => {
+          "SELECT (COUNT(*) - 1) AS admins FROM as_admins",
+          (err, result) => {        
             if (err) throw err;
             stats.admins = result[0].admins;
 
