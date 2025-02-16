@@ -35,17 +35,17 @@ function App() {
   }, []);
 
   const handleLogin = () => {
-    window.location.href = `${API_URL}/auth/steam`; // ✅ Редирект на Steam
+    window.location.href = `${API_URL}/auth/steam`;
   };
-
+  
   const handleLogout = () => {
-    fetch(`${API_URL}/logout`, { credentials: "include" }) // ✅ Удаление сессии
+    fetch(`${API_URL}/logout`, { credentials: "include" })
       .then(() => {
         setUser(null);
-        window.location.reload(); // ✅ Перезагрузка страницы
+        window.location.reload(); // ✅ Обновляем страницу после выхода
       })
       .catch((err) => console.error("Ошибка выхода:", err));
-  };
+  }
 
   return (
     <Router>

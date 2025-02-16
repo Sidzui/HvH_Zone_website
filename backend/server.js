@@ -4,41 +4,50 @@ const passport = require("passport");
 const SteamStrategy = require("passport-steam").Strategy;
 const mysql = require("mysql2");
 const cors = require("cors");
+const MySQLStore = require("express-mysql-session")(session);
 
-// 🔧 Подключение к MySQL
-const db = mysql.createConnection({
+// 🔧 Подключение к MySQL с использованием пула соединений
+const db = mysql.createPool({
   host: "185.248.101.137",
   user: "gs32752",
   password: "cvYpNP6EVV",
   database: "gs32752",
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
 });
 
-db.connect((err) => {
-  if (err) throw err;
-  console.log("✅ Подключено к MySQL!");
+db.getConnection((err) => {
+  if (err) {
+    console.error("❌ Ошибка подключения к MySQL:", err);
+  } else {
+    console.log("✅ Подключено к MySQL!");
+  }
 });
 
 const app = express();
-const CLIENT_URL = "https://hvhzone.netlify.app"; // ✅ Указываем домен фронтенда
 
-// 🌍 Разрешаем CORS (чтобы Netlify мог получать куки с Render)
+// 🌍 Разрешаем CORS для Netlify
 app.use(
   cors({
-    origin: CLIENT_URL,
-    credentials: true, // ✅ Разрешаем передачу сессионных куки
+    origin: "https://hvhzone.netlify.app",
+    credentials: true,
   })
 );
 
-// 🔐 Настройка сессий
+// 🔐 Хранилище сессий в MySQL
+const sessionStore = new MySQLStore({}, db);
+
 app.use(
   session({
     secret: "supersecret",
     resave: false,
     saveUninitialized: false,
+    store: sessionStore,
     cookie: {
-      secure: true, // ✅ Нужно для HTTPS
-      httpOnly: true,
-      sameSite: "none", // ✅ Позволяет кросс-доменные куки
+      secure: true,
+      sameSite: "none",
+      httpOnly: false,
     },
   })
 );
@@ -46,13 +55,13 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-// 🔑 Авторизация через Steam
+// 🔑 Steam Авторизация
 passport.use(
   new SteamStrategy(
     {
       returnURL: "https://hvh-zone-website.onrender.com/auth/steam/return",
       realm: "https://hvh-zone-website.onrender.com/",
-      apiKey: process.env.STEAM_API_KEY, // ✅ Используем API-ключ из переменных окружения
+      apiKey: "37AAEFA9747FBE0916081BF5F3829EC0",
     },
     function (identifier, profile, done) {
       profile.identifier = identifier;
@@ -64,37 +73,35 @@ passport.use(
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((obj, done) => done(null, obj));
 
-// 🚀 Авторизация через Steam
+// 🚀 Вход через Steam
 app.get("/auth/steam", passport.authenticate("steam"));
 
 app.get(
   "/auth/steam/return",
   passport.authenticate("steam", { failureRedirect: "/" }),
   (req, res) => {
-    res.redirect(CLIENT_URL); // ✅ Перенаправляем обратно на фронтенд
+    res.redirect("https://hvhzone.netlify.app"); // ✅ После входа редирект
   }
 );
 
-// 🔍 Проверка текущего пользователя
+// 🔄 Выход
+app.get("/logout", (req, res) => {
+  req.logout(() => {
+    res.redirect("https://hvhzone.netlify.app");
+  });
+});
+
+// 👤 Получение данных пользователя
 app.get("/user", (req, res) => {
-  console.log("Запрос пользователя:", req.user);
   if (req.isAuthenticated()) {
     res.json({
       id: req.user.id,
       name: req.user.displayName,
-      avatar: req.user.photos[0].value, // ✅ Отправляем аватарку Steam
+      avatar: req.user.photos[0].value,
     });
   } else {
-    res.status(401).json({ error: "Не авторизован" });
+    res.json(null);
   }
-});
-
-// 🔄 Выход
-app.get("/logout", (req, res) => {
-  req.session.destroy((err) => {
-    res.clearCookie("connect.sid", { path: "/" }); // ✅ Удаляем куки с сессией
-    res.redirect(CLIENT_URL);
-  });
 });
 
 // 📊 Получение статистики
