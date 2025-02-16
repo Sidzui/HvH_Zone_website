@@ -1,8 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
+
+const API_URL = "https://hvh-zone-website.onrender.com";
 
 function HomePage() {
   const [copied, setCopied] = useState(false);
+  const [stats, setStats] = useState({ players: 0, recent_players: 0, admins: 0, bans: 0 });
   const serverIP = "185.248.101.137:30029";
+
+  useEffect(() => {
+    // Загружаем статистику с бэкенда
+    fetch(`${API_URL}/stats`)
+      .then((res) => res.json())
+      .then((data) => setStats(data))
+      .catch((err) => console.error("Ошибка загрузки статистики:", err));
+  }, []);
 
   const handleCopyIP = () => {
     navigator.clipboard.writeText(serverIP);
@@ -46,7 +57,7 @@ function HomePage() {
               Присоединяйтесь к нашему серверу и наслаждайтесь игрой!
             </p>
           </div>
-          
+
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <div className="flex items-center bg-gray-900/50 rounded-lg border border-pink-500/20 p-2">
               <span className="text-gray-300 px-3">{serverIP}</span>
@@ -70,10 +81,10 @@ function HomePage() {
       {/* Stats Section */}
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-          <StatCard value="35 026" label="ИГРОКОВ" />
-          <StatCard value="234" label="ИГРОКОВ ЗА 24 ЧАСА" />
-          <StatCard value="11" label="АДМИНОВ" />
-          <StatCard value="9 011" label="БАНОВ" />
+          <StatCard value={stats.players.toLocaleString()} label="ИГРОКОВ" />
+          <StatCard value={stats.recent_players.toLocaleString()} label="ИГРОКОВ ЗА 24 ЧАСА" />
+          <StatCard value={stats.admins.toLocaleString()} label="АДМИНОВ" />
+          <StatCard value={stats.bans.toLocaleString()} label="БАНОВ" />
         </div>
       </div>
     </div>
