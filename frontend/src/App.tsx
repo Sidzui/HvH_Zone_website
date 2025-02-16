@@ -13,14 +13,20 @@ import WinterCasePage from "./pages/cases/WinterCasePage";
 import NeverloseCasePage from "./pages/cases/NeverloseCasePage";
 import SkeetCasePage from "./pages/cases/SkeetCasePage";
 
-const API_URL = "https://hvh-zone-website.onrender.com"; // ✅ Домен бэкенда
+const API_URL = "https://hvhzone.ru"; // ✅ Домен бэкенда
 
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${API_URL}/user`, { credentials: "include" }) // ✅ Запрашиваем пользователя
+    fetch(`${API_URL}/user`, {
+      method: "GET",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json"
+      }
+    }) // ✅ Запрашиваем пользователя
       .then((res) => res.json())
       .then((data) => {
         if (data && !data.error) {
@@ -42,11 +48,11 @@ function App() {
     fetch(`${API_URL}/logout`, { credentials: "include" })
       .then(() => {
         setUser(null);
-        window.location.reload(); // ✅ Обновляем страницу после выхода
+        window.location.href = "/"; // ✅ Редиректим на главную
       })
       .catch((err) => console.error("Ошибка выхода:", err));
-  }
-
+  };
+  
   return (
     <Router>
       <div className="min-h-screen bg-gray-900 text-white">

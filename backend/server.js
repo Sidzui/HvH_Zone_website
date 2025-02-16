@@ -8,10 +8,10 @@ const MySQLStore = require("express-mysql-session")(session);
 
 const app = express();
 
-// 🌍 Разрешаем CORS для Netlify
+// 🌍 Разрешаем CORS
 app.use(
   cors({
-    origin: "https://hvhzone.netlify.app",
+    origin: "https://hvhzone.ru",
     credentials: true, // ✅ Разрешаем кросс-доменные куки
   })
 );
@@ -41,12 +41,13 @@ app.use(
     saveUninitialized: false,
     store: sessionStore,
     cookie: {
-      secure: true,   // ✅ Должно быть true, так как сайт работает на HTTPS
-      sameSite: "none", // ✅ Разрешаем кросс-доменные куки
+      secure: true,       // ✅ Должно быть true, так как HTTPS
+      sameSite: "lax",    // 🔥 Исправляем на `lax`, чтобы куки работали правильно
       httpOnly: true,
     },    
   })
 );
+
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -55,8 +56,8 @@ app.use(passport.session());
 passport.use(
   new SteamStrategy(
     {
-      returnURL: "https://hvh-zone-website.onrender.com/auth/steam/return",
-      realm: "https://hvh-zone-website.onrender.com/",
+      returnURL: "https://hvhzone.ru/auth/steam/return",
+      realm: "https://hvhzone.ru/",
       apiKey: "37AAEFA9747FBE0916081BF5F3829EC0",
     },
     function (identifier, profile, done) {
@@ -72,19 +73,23 @@ passport.deserializeUser((obj, done) => done(null, obj));
 // 🚀 Вход через Steam
 app.get("/auth/steam", passport.authenticate("steam"));
 
+
 app.get(
   "/auth/steam/return",
   passport.authenticate("steam", { failureRedirect: "/" }),
   (req, res) => {
     console.log("✅ Пользователь авторизован:", req.user);
-    res.redirect("https://hvhzone.netlify.app"); // ✅ После входа редирект
+    console.log("🔍 Получен запрос на /auth/steam/return");
+    console.log("🔍 Сессия после входа:", req.session);
+    console.log("🔍 Пользователь после входа:", req.user);
+    res.redirect("https://hvhzone.ru"); // ✅ После входа редирект
   }
 );
 
 // 🔄 Выход
 app.get("/logout", (req, res) => {
   req.logout(() => {
-    res.redirect("https://hvhzone.netlify.app");
+    res.redirect("https://hvhzone.ru");
   });
 });
 
