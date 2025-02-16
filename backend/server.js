@@ -1,35 +1,56 @@
-require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const passport = require("passport");
 const SteamStrategy = require("passport-steam").Strategy;
+const mysql = require("mysql2");
 const cors = require("cors");
-const db = require("./database"); // Используем подключение к MySQL из database.js
+
+// 🔧 Подключение к MySQL
+const db = mysql.createConnection({
+  host: "185.248.101.137",
+  user: "gs32752",
+  password: "cvYpNP6EVV",
+  database: "gs32752",
+});
+
+db.connect((err) => {
+  if (err) throw err;
+  console.log("✅ Подключено к MySQL!");
+});
 
 const app = express();
 
-// 🌍 Разрешаем CORS (чтобы Netlify мог делать запросы)
-app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
+// 🌍 Настройка CORS (Разрешаем запросы с Netlify)
+app.use(
+  cors({
+    origin: "https://hvhzone.netlify.app", // ✅ Укажи URL фронтенда
+    credentials: true, // ✅ Разрешаем куки и сессии
+  })
+);
 
-// 🔐 Настроим сессии
+// 🔐 Настройка сессий
 app.use(
   session({
     secret: "supersecret",
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false }, // Должно быть `true`, если используешь HTTPS
+    cookie: {
+      secure: true, // ✅ Нужно для HTTPS
+      sameSite: "none", // ✅ Позволяет кросс-доменные куки
+    },
   })
 );
 
 app.use(passport.initialize());
 app.use(passport.session());
 
+// 🔑 Настройка Steam авторизации
 passport.use(
   new SteamStrategy(
     {
-      returnURL: `${process.env.BACKEND_URL}/auth/steam/return`,
-      realm: process.env.BACKEND_URL,
-      apiKey: process.env.STEAM_API_KEY,
+      returnURL: "https://hvh-zone-website.onrender.com/auth/steam/return",
+      realm: "https://hvh-zone-website.onrender.com/",
+      apiKey: "YOUR_STEAM_API_KEY",
     },
     function (identifier, profile, done) {
       profile.identifier = identifier;
@@ -48,19 +69,28 @@ app.get(
   "/auth/steam/return",
   passport.authenticate("steam", { failureRedirect: "/" }),
   (req, res) => {
-    res.redirect(process.env.FRONTEND_URL);
+    res.redirect("https://hvhzone.netlify.app"); // ✅ После входа редирект на сайт
   }
 );
 
-// 🔐 Получение данных пользователя
-app.get("/user", (req, res) => {
-  res.json(req.user || null);
+// 🔄 Выход
+app.get("/logout", (req, res) => {
+  req.logout(() => {
+    res.redirect("https://hvhzone.netlify.app");
+  });
 });
 
-// 🚪 Выход
-app.get("/logout", (req, res) => {
-  req.logout();
-  res.redirect(process.env.FRONTEND_URL);
+// 👤 Получение данных пользователя
+app.get("/user", (req, res) => {
+  if (req.isAuthenticated()) {
+    res.json({
+      id: req.user.id,
+      name: req.user.displayName,
+      avatar: req.user.photos[0].value, // ✅ Отправляем аватарку Steam
+    });
+  } else {
+    res.json(null);
+  }
 });
 
 // 📊 Получение статистики
@@ -79,40 +109,24 @@ app.get("/stats", (req, res) => {
         if (err) throw err;
         stats.recent_players = result[0].recent_players;
 
-        db.query(
-          "SELECT (COUNT(*) - 1) AS admins FROM as_admins",
-          (err, result) => {        
-            if (err) throw err;
-            stats.admins = result[0].admins;
+        db.query("SELECT (COUNT(*) - 1) AS admins FROM as_admins", (err, result) => {
+          if (err) throw err;
+          stats.admins = result[0].admins;
 
-            db.query(
-              "SELECT (SELECT COUNT(*) FROM iks_bans) + (SELECT COUNT(*) FROM as_punishments WHERE punish_type = 0) AS bans",
-              (err, result) => {
-                if (err) throw err;
-                stats.bans = result[0].bans;
-                res.json(stats);
-              }
-            );
-          }
-        );
+          db.query(
+            "SELECT (SELECT COUNT(*) FROM iks_bans) + (SELECT COUNT(*) FROM as_punishments WHERE punish_type = 0) AS bans",
+            (err, result) => {
+              if (err) throw err;
+              stats.bans = result[0].bans;
+
+              res.json(stats);
+            }
+          );
+        });
       }
     );
   });
 });
 
-app.get("/user", (req, res) => {
-  if (req.isAuthenticated()) {
-    res.json({
-      id: req.user.id,
-      name: req.user.displayName,
-      avatar: req.user.photos[0].value, // Получаем аватарку
-    });
-  } else {
-    res.json(null);
-  }
-});
-
-
-// 🌐 Запускаем сервер
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`🚀 Сервер запущен на порту ${PORT}`));
+// 🌐 Запуск сервера
+app.listen(3000, () => console.log("🚀 Сервер запущен на порту 3000"));
