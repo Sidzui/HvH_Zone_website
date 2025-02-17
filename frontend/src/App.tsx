@@ -42,7 +42,7 @@ function App() {
   }, []);
 
   const handleLogin = () => {
-    window.location.href = `${AUTH_URL}/auth/steam`;
+    window.location.href = `${API_URL}/auth/steam`;
   };
   
   const handleLogout = () => {

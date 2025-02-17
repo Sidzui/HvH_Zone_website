@@ -18,7 +18,7 @@ const products: Product[] = [
     id: 1,
     name: 'VIP Статус',
     description: 'Получите доступ к эксклюзивным функциям и привилегиям',
-    image: 'https://images.unsplash.com/photo-1614680376593-902f74cf0d41?auto=format&fit=crop&q=80&w=400&h=300',
+    image: '/img/vip.png',
     price: {
       monthly: 299,
       permanent: 2999
@@ -29,7 +29,7 @@ const products: Product[] = [
     id: 2,
     name: 'Админ Статус',
     description: 'Полный контроль над сервером и расширенные возможности',
-    image: 'https://images.unsplash.com/photo-1614680376408-12c9ea5ebd4f?auto=format&fit=crop&q=80&w=400&h=300',
+    image: '/img/vip.png',
     price: {
       monthly: 599,
       permanent: 5999
@@ -38,67 +38,12 @@ const products: Product[] = [
   },
   {
     id: 3,
-    name: 'Оперативник "Фантом"',
-    description: 'Элитный боец спецподразделения',
-    image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=400&h=300',
+    name: 'Модель"',
+    description: '...',
+    image: '/img/vip.png',
     price: {
       monthly: 199,
       permanent: 799
-    },
-    category: 'character'
-  },
-  {
-    id: 4,
-    name: 'Наемник "Призрак"',
-    description: 'Тактический специалист в маскировке',
-    image: 'https://images.unsplash.com/photo-1542332213-9b5a5a3fad35?auto=format&fit=crop&q=80&w=400&h=300',
-    price: {
-      monthly: 249,
-      permanent: 899
-    },
-    category: 'character'
-  },
-  {
-    id: 5,
-    name: 'Штурмовик "Ворон"',
-    description: 'Специалист по ближнему бою',
-    image: 'https://images.unsplash.com/photo-1542332213-9b5a5a3fad35?auto=format&fit=crop&q=80&w=400&h=300',
-    price: {
-      monthly: 199,
-      permanent: 799
-    },
-    category: 'character'
-  },
-  {
-    id: 6,
-    name: 'Разведчик "Тень"',
-    description: 'Мастер скрытного проникновения',
-    image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=400&h=300',
-    price: {
-      monthly: 229,
-      permanent: 849
-    },
-    category: 'character'
-  },
-  {
-    id: 7,
-    name: 'Медик "Ангел"',
-    description: 'Специалист по поддержке команды',
-    image: 'https://images.unsplash.com/photo-1542332213-9b5a5a3fad35?auto=format&fit=crop&q=80&w=400&h=300',
-    price: {
-      monthly: 219,
-      permanent: 829
-    },
-    category: 'character'
-  },
-  {
-    id: 8,
-    name: 'Снайпер "Сокол"',
-    description: 'Эксперт дальнего боя',
-    image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80&w=400&h=300',
-    price: {
-      monthly: 239,
-      permanent: 879
     },
     category: 'character'
   }

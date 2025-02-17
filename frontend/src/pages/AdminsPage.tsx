@@ -6,13 +6,13 @@ const admins = [
     name: 'xxxa',
     role: 'Creator',
     discord: 'toro6666',
-    image: 'https://images.unsplash.com/photo-1618077360395-f3068be8e001?auto=format&fit=crop&q=80&w=400&h=400'
+    image: '/img/vip.png'
   },
   {
     name: 'beautiful life',
     role: 'Head Administrator',
     discord: 'yyoungfacee',
-    image: 'https://images.unsplash.com/photo-1618077360395-f3068be8e002?auto=format&fit=crop&q=80&w=400&h=400'
+    image: '/img/vip.png'
   }
 ];
 

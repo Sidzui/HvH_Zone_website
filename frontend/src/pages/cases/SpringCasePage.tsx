@@ -17,7 +17,7 @@ const rewards = {
 function SpringCasePage() {
   return (
     <CaseTemplate
-      title="КЕЙС БОМЖА"
+      title="SpringCase"
       price={15}
       rewards={rewards}
       backgroundSymbol="❄"

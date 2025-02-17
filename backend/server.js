@@ -58,7 +58,7 @@ app.use(passport.session());
 passport.use(
   new SteamStrategy(
     {
-      returnURL: "https://hvhzone.ru/auth/steam/return",
+      returnURL: "https://hvhzone.ru/api/auth/steam/return",
       realm: "https://hvhzone.ru/",
       apiKey: "37AAEFA9747FBE0916081BF5F3829EC0",
     },
@@ -73,11 +73,11 @@ passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((obj, done) => done(null, obj));
 
 // 🚀 Вход через Steam
-app.get("/auth/steam", passport.authenticate("steam"));
+app.get("/api/auth/steam", passport.authenticate("steam"));
 
 
 app.get(
-  "/auth/steam/return",
+  "/api/auth/steam/return",
   passport.authenticate("steam", { failureRedirect: "/" }),
   (req, res) => {
     console.log("✅ Пользователь авторизован:", req.user);

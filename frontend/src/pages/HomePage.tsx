@@ -1,11 +1,17 @@
 import React, { useState, useEffect } from "react";
+import { Copy, Check, PlayCircle } from "lucide-react";
 
 const AUTH_URL = "https://hvhzone.ru";
 const API_URL = "https://hvhzone.ru/api";
 
 function HomePage() {
   const [copied, setCopied] = useState(false);
-  const [stats, setStats] = useState({ players: 0, recent_players: 0, admins: 0, bans: 0 });
+  const [stats, setStats] = useState({
+    players: 0,
+    recent_players: 0,
+    admins: 0,
+    bans: 0,
+  });
   const serverIP = "185.248.101.137:30029";
 
   useEffect(() => {
@@ -29,7 +35,9 @@ function HomePage() {
   return (
     <div className="pt-16">
       {/* Hero Banner */}
-      <div className="h-[500px] w-full bg-[url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80')] bg-cover bg-center relative">
+      <div
+        className="h-[500px] w-full bg-[url('https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&q=80')] bg-cover bg-center relative"
+      >
         <div className="absolute inset-0 bg-gradient-to-r from-pink-500/20 to-purple-500/20 backdrop-blur-sm">
           <div className="max-w-7xl mx-auto px-4 h-full flex items-center">
             <div className="max-w-xl">
@@ -52,26 +60,32 @@ function HomePage() {
         <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="text-center mb-8">
             <h2 className="text-3xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">
-              НАШ СЕРВЕР
+              HvH Zone
             </h2>
             <p className="text-gray-300 text-lg">
-              Присоединяйтесь к нашему серверу и наслаждайтесь игрой!
+              Присоединяйся к HvH Zone и наслаждайся игрой!
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <div className="flex items-center bg-gray-900/50 rounded-lg border border-pink-500/20 p-2">
-              <span className="text-gray-300 px-3">{serverIP}</span>
+          {/* Обёртка для центрирования */}
+          <div className="flex justify-center">
+            {/* Контейнер с тёмным фоном для IP и кнопки копирования */}
+            <div className="inline-flex items-center gap-2 rounded-lg border border-pink-500/20 p-4 bg-gray-900/50">
+              <span className="text-gray-300 text-lg">{serverIP}</span>
               <button
                 onClick={handleCopyIP}
-                className="bg-gray-800 hover:bg-gray-700 text-white px-4 py-2 rounded-lg transition-colors ml-2"
+                className="bg-gray-800 hover:bg-gray-700 text-white px-3 py-2 rounded transition-colors flex items-center"
               >
-                {copied ? "Скопировано!" : "Копировать IP"}
+                {copied ? <Check size={16} /> : <Copy size={16} />}
               </button>
             </div>
+          </div>          
+
+          {/* Кнопка подключения под контейнером */}
+          <div className="mt-4 flex justify-center">
             <button
               onClick={handleConnect}
-              className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-2 rounded-lg hover:opacity-90 transition-opacity"
+              className="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-8 py-2 rounded-lg hover:opacity-90 transition-opacity flex items-center gap-2 text-sm"
             >
               Подключиться
             </button>
@@ -83,7 +97,10 @@ function HomePage() {
       <div className="max-w-7xl mx-auto px-4 py-12">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
           <StatCard value={stats.players.toLocaleString()} label="ИГРОКОВ" />
-          <StatCard value={stats.recent_players.toLocaleString()} label="ИГРОКОВ ЗА 24 ЧАСА" />
+          <StatCard
+            value={stats.recent_players.toLocaleString()}
+            label="ИГРОКОВ ЗА 24 ЧАСА"
+          />
           <StatCard value={stats.admins.toLocaleString()} label="АДМИНОВ" />
           <StatCard value={stats.bans.toLocaleString()} label="БАНОВ" />
         </div>
@@ -104,3 +121,4 @@ function StatCard({ value, label }: { value: string; label: string }) {
 }
 
 export default HomePage;
+

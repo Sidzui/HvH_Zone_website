@@ -5,25 +5,25 @@ const cases = [
   {
     id: 'spring',
     name: 'Spring Case',
-    image: 'https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&q=80&w=400&h=300',
+    image: '/img/vip.png',
     price: 299
   },
   {
     id: 'winter',
     name: 'Winter Case',
-    image: 'https://images.unsplash.com/photo-1457269449834-928af64c684d?auto=format&fit=crop&q=80&w=400&h=300',
+    image: '/img/vip.png',
     price: 399
   },
   {
     id: 'neverlose',
     name: 'Neverlose Case',
-    image: 'https://images.unsplash.com/photo-1614680376593-902f74cf0d41?auto=format&fit=crop&q=80&w=400&h=300',
+    image: '/img/vip.png',
     price: 499
   },
   {
     id: 'skeet',
     name: 'Skeet.cc Case',
-    image: 'https://images.unsplash.com/photo-1614680376408-12c9ea5ebd4f?auto=format&fit=crop&q=80&w=400&h=300',
+    image: '/img/vip.png',
     price: 599
   }
 ];
